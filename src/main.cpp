@@ -18,7 +18,7 @@ class OHLCV {
         Date m_date;
 
     public:
-        OHLCV(double open, double high, double low, double close, double volume, Date date) {
+        OHLCV(double open, double high, double low, double close, int volume, Date date) {
             if (low > high) std::cerr << "WARNING: Invalid low price!";
             m_open = open;
             m_high = high;
@@ -48,7 +48,7 @@ class OHLCV {
             return m_volume;
         }
 
-        Date getDate() {
+        Date getDate() const {
             return m_date;
         }
 
@@ -100,7 +100,6 @@ std::vector<OHLCV> parseLines(std::ifstream& file, int numLines) {
         // high
         getline(ss, t, del);
         double high = std::stod(t);
-        std::cout << high << std::endl;
 
         // low
         getline(ss, t, del);
@@ -123,7 +122,7 @@ std::vector<OHLCV> parseLines(std::ifstream& file, int numLines) {
 }
 
 void printLines(const std::vector<OHLCV>& vec) {
-    for (OHLCV obj : vec) {
+    for (const OHLCV& obj : vec) {
         Date date = obj.getDate();
         std::string d;
         d += std::to_string(date.year);
