@@ -3,56 +3,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
-struct Date {
-    int year, month, day;
-};
-
-class OHLCV {
-    private:
-        double m_open;
-        double m_high;
-        double m_low;
-        double m_close;
-        int m_volume;
-        Date m_date;
-
-    public:
-        OHLCV(double open, double high, double low, double close, int volume, Date date) {
-            if (low > high) std::cerr << "WARNING: Invalid low price!";
-            m_open = open;
-            m_high = high;
-            m_low = low;
-            m_close = close;
-            m_volume = volume;
-            m_date = date;
-        }
-
-        double getOpen() const {
-            return m_open;
-        }
-        
-        double getHigh() const {
-            return m_high;
-        }
-
-        double getLow() const {
-            return m_low;
-        }
-
-        double getClose() const {
-            return m_close;
-        }
-
-        int getVolume() const {
-            return m_volume;
-        }
-
-        Date getDate() const {
-            return m_date;
-        }
-
-};
+#include <cstdint>
+#include "ohlcv.h"
 
 Date parseDate(std::string date_p) {
     Date date;
@@ -111,7 +63,7 @@ std::vector<OHLCV> parseLines(std::ifstream& file, int numLines) {
 
         // volume
         getline(ss, t);
-        int volume = std::stoi(t);
+        std::int64_t volume = std::stoll(t);
 
         OHLCV obj = OHLCV(open, high, low, close, volume, date);
         vec.push_back(obj);
@@ -140,7 +92,7 @@ int main(int argc, char *argv[]) {
     
     if (argc != 3) {
         // Print usage and exit
-        std::cout << "Usage: " << argv[0] << "3" << std::endl;
+        std::cerr << "Usage: " << argv[0] << "<csv_file> <num_lines>" << std::endl;
         return 1;
     }
 
