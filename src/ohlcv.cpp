@@ -1,31 +1,23 @@
+#include <cstdint>
 #include "ohlcv.h"
 
 
-OHLCV::OHLCV(double open, double high, double low, double close, std::int64_t volume, Date date) 
-: m_open(open), m_high(high), m_low(low), m_close(close), m_volume(volume), m_date(date) {
-
+std::string toString(Date d) {
+    std::string s;
+    s+= std::to_string(d.year);
+    s+= '-';
+    s+= std::to_string(d.month);
+    s+='-';
+    s+= std::to_string(d.day);
+    return s;
 }
 
-double OHLCV::getOpen() const {
-    return m_open;
-}
-
-double OHLCV::getHigh() const {
-    return m_high;
-}
-
-double OHLCV::getLow() const {
-    return m_low;
-}
-
-double OHLCV::getClose() const {
-    return m_close;
-}
-
-int OHLCV::getVolume() const {
-    return m_volume;
-}
-
-Date OHLCV::getDate() const {
-    return m_date;
+std::string toString(const OHLCV& bar) {
+    std::string s;
+    s += ": open=";   s += std::to_string(bar.m_open);
+    s += " high=";    s += std::to_string(bar.m_high);
+    s += " low=";     s += std::to_string(bar.m_low);
+    s += " close=";   s += std::to_string(bar.m_close);
+    s += " volume=";  s += std::to_string(bar.m_volume);
+    return s;
 }
