@@ -9,9 +9,6 @@
 
 void buildCSV(const std::vector<OHLCV>& vec);
 
-std::vector<std::optional<double>> SMA(const std::vector<OHLCV>& vec);
-
-
-void 
+std::vector<std::optional<double>> closing_SMA(const std::vector<OHLCV>& vec, int n);
 
 #endif
