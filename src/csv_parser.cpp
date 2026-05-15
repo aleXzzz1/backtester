@@ -36,7 +36,7 @@ OHLCV parseRow(const std::string& line) {
     // close
     getline(ss, t, del); // t = "20.674667358398438" for example
     double close = std::stod(t);
-    getline(ss,t,del); // because we have two close columns for some reason
+    getline(ss, t, del); // because we have two close columns for some reason
 
     // high
     getline(ss, t, del);

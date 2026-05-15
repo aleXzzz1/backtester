@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(csv_analyzer CXX)
+project(backtester CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,13 +13,12 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(csv_analyzer src/main.cpp src/ohlcv.cpp src/csv_parser.cpp)
-
+add_executable(backtester src/main.cpp src/MarketEvent.cpp src/csv_parser.cpp)
 
 add_executable(tests
     tests/test_stats.cpp
     src/stats.cpp       # same source files, just linked into a different exe
-    src/ohlcv.cpp
+    src/MarketEvent.cpp
 )
 
 target_include_directories(tests PRIVATE src)
