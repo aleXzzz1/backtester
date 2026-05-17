@@ -1,8 +1,8 @@
-#ifndef STATS_H
-#define STATS_H
+#ifndef INDICATORS_H
+#define INDICATORS_H
 
 #include <vector>
-#include "ohlcv.h"
+#include "MarketEvent.h"
 #include <iostream>
 #include <fstream>
 #include <optional>

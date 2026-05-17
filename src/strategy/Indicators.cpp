@@ -1,7 +1,24 @@
-#include "stats.h"
+#include "Indicators.h"
 #include <queue>
 #include <deque>
 #include <cmath>
+
+template <typename Event>
+double nday_SMA(const std::deque<Event>& history, int period) {
+    int ds = history.size();
+    if (period > ds) {
+        std::cerr << "Aborted " << period << "-day SMA evaluation.\n" << 
+        "Reason: Not enough market history!" << std::endl;  
+    }
+
+    double sum {0};
+    for (int i = ds - 1; i >= ds - period; i--) {
+        sum += history[i].close_;
+    }
+    
+    return (double) (sum / period);
+    
+}
 
 std::vector<std::optional<double>> closing_SMA(const std::vector<OHLCV>& prices, int window) {
     std::vector<std::optional<double>> sma_vec;

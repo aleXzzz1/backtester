@@ -5,13 +5,12 @@
 #include <string>
 #include <chrono>
 
-class MarketEvent {
-
+struct MarketEvent {
+    std::string symbol_;
 };
 
 struct OHLCV : public MarketEvent {
-    double open_, high_, low_, close_;
-    std::int64_t volume_;
+    double open_, high_, low_, close_, volume_;
     std::chrono::year_month_day date_;
 
 };
