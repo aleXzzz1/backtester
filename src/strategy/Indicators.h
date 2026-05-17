@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <optional>
+#include <deque>
 
 struct BollingerBand {
     double upper;
@@ -13,7 +14,19 @@ struct BollingerBand {
     double lower;
 };
 
-void buildCSV(const std::vector<OHLCV>& vec);
+class SMA {
+    public:
+    explicit SMA(int period): period_(period) {}
+
+    std::optional<double> update(double price);
+
+    std::optional<double> value() const;
+    
+    private:
+    int period_;
+    double sum_ {0.0};
+    std::deque<double> window_;
+}
 
 std::vector<std::optional<double>> closing_SMA(const std::vector<OHLCV>& prices, int window);
 

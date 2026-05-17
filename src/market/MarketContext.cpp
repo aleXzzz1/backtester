@@ -12,6 +12,6 @@ void MarketContext<Event>::update(const Event& event, const std::string symbol) 
 }
 
 template <typename Event>
-const deque<Event>& MarketContext<Event>::history(const std::string& symbol) {
+const deque<Event>& MarketContext<Event>::history(const std::string& symbol) const {
     return history_[symbol];
 }
