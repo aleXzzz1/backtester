@@ -20,6 +20,8 @@ class EagerCSVFeed : public DataFeed<OHLCV> {
 
         std::size_t size() const { return events_.size(); }
 
+        std::string get_symbol() const { return symbol_; } 
+
     private:
         OHLCV parseLine(const string& line);
         std::chrono::year_month_day parseDate(const string& s);

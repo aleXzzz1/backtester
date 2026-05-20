@@ -90,6 +90,7 @@ OHLCV EagerCSVFeed::parseLine(const string& line) {
     event.low_ = std::stod(col_data[4]);
     event.close_ = std::stod(col_data[1]);
     event.volume_=std::stod(col_data[6]);
+    event.symbol_ = symbol_;
 
     return event;
 }

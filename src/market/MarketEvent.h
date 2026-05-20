@@ -5,6 +5,10 @@
 #include <string>
 #include <chrono>
 
+inline double execution_price(const OHLCV& bar) { return bar.open_; }   // bar fills happen at next open
+inline double mark_price(const OHLCV& bar)      { return bar.close_; }  // value positions at close
+inline auto   event_time(const OHLCV& bar)      { return std::chrono::sys_days(bar.date_); }
+
 struct MarketEvent {
     std::string symbol_;
 };

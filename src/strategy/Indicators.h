@@ -26,7 +26,7 @@ class SMA {
     int period_;
     double sum_ {0.0};
     std::deque<double> window_;
-}
+};
 
 std::vector<std::optional<double>> closing_SMA(const std::vector<OHLCV>& prices, int window);
 

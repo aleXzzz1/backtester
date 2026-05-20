@@ -5,7 +5,7 @@
 #include <deque>
 #include "MarketEvent.h"
 
-// 
+using timestamp = std::chrono::system_clock::time_point;
 
 template <typename Event>
 class MarketContext {
@@ -15,10 +15,14 @@ class MarketContext {
 
         const std::deque<Event>& history(const std::string& symbol) const;
 
+        Event get_latest(const std::string& symbol) const;
+
+        timestamp get_time() { return currentTime_; }
+
     private:
 
     std::unordered_map<std::string, std::deque<Event>> history_;
-    std::chrono::system_clock::time_point currentTime_ {};
+    timestamp currentTime_ {};
     std::size_t maxHistorySize_ {500};
 
 };

@@ -3,6 +3,25 @@
 #include <deque>
 #include <cmath>
 
+std::optional<double> SMA::update(double price) {
+
+    window_.push_back(price);
+    sum_ += price;
+    if (window_.size() > period_) {
+            sum_ -= window_.front();
+            window_.pop_front();
+        }
+    if (window_.size() < period_) {
+        return std::nullopt;   // not enough info period_-day SMA
+    }
+    return sum_ / period_;
+}
+
+std::optional<double> SMA::value() const {
+    if (window_.size() < period_) return std::nullopt;
+    return sum_ / period_;
+}
+
 /*
 template <typename Event>
 double sma(const std::deque<Event>& history, int period) {
@@ -102,29 +121,7 @@ std::vector<std::optional<BollingerBand>> BollBands(const std::vector<OHLCV>& pr
     }
 
     return bb_vec;
-
-
 }
-
 */
-
-std::optional<double> SMA::update(double price) {
-
-    window_.push_back(price);
-    sum_ += price;
-    if (window_.size() > period_) {
-            sum_ -= window_.front();
-            window_.pop_front();
-        }
-    if (window_.size() < period_) {
-        return std::nullopt;   // not enough info period_-day SMA
-    }
-    return sum_ / period_;
-}
-
-std::optional<double> SMA::value() const {
-    if (window_.size() < period_) return std::nullopt;
-    return sum_ / period_;
-}
 
 

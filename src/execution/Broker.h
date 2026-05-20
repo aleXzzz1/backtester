@@ -8,16 +8,36 @@
 #include "Indicators.h"
 #include <string>
 
-enum class Side : uint8_t {
-    BUY,
-    SELL
+#define COMISSION 2
+#define SLIPPAGE 0.05
+
+enum class Direction { LONG, FLAT, SHORT };
+using timestamp = std::chrono::system_clock::time_point;
+
+struct Signal {
+    std::string symbol;
+    Direction direction;
 };
 
 struct Order {
-    double price_, volume_;
+    double volume_;
     std::string symbol;
-    Side side_;
     
+};
+
+struct Fill {
+    double price_;
+    double volume_;
+    double total_cost_;
+    timestamp submittedAt;
+    std::string symbol;
+};
+
+class Broker {
+    public:
+        vector<Fill> fill(const vector<Order>& orders, double open_price);
+    private:
+
 };
 
 #endif
