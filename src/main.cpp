@@ -5,7 +5,15 @@
 #include <vector>
 #include <cstdint>
 #include "MarketEvent.h"
-#include "csv_parser.h"
+#include "DataFeed.h"
+#include "EagerCSVFeed.h"
+#include "Broker.h"
+#include "MarketContext.h"
+#include "MarketEvent.h"
+#include "Portfolio.h"
+#include "MAC.h"
+#include "Engine.h"
+#include "Analytics.h"
 
 int main(int argc, char *argv[]) {
     
@@ -14,21 +22,29 @@ int main(int argc, char *argv[]) {
         std::cerr << "Usage: " << argv[0] << "<csv_file>" << std::endl;
         return 1;
     }
+    auto feed = std::make_unique<EagerCSVFeed>(argv[1]);
+    std::string symbol = feed->get_symbol();
 
-    std::ifstream file{argv[1]};
+    auto strategy = std::make_unique<MACrossover>(symbol, 20, 50);
+    
 
-    if (!file) {
-        // Print an error and exit
-        std::cerr << "Uh oh, TSLA.csv could not be opened for reading!\n";
-        return 1;
-    }
+    Engine<OHLCV> engine{
+        std::move(feed),
+        std::move(strategy), 10000.0
+    };
 
-    std::vector<OHLCV> vec = parseFile(file);
+    // --- Run ---
+    std::cout << "Running backtest on " << symbol
+                << " (MAC " << 20 << "/" << 50
+                << ", $" << 10000.0 << " starting)...\n";
+    engine.run();
 
-    for (const OHLCV& obj : vec) {
-        std::cout << toString(obj.m_date) << toString(obj) << std::endl;
-    }
+    auto curve = engine.get_port_curve();
+    auto fills = engine.get_port_fills();
+    PerformanceReport report = Analytics::compute(curve, fills);
+    report.print_report();
 
+    
     return 0;
 
 

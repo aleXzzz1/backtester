@@ -8,9 +8,6 @@
 #include "Indicators.h"
 #include <string>
 
-#define COMISSION 2
-#define SLIPPAGE 0.05
-
 enum class Direction { LONG, FLAT, SHORT };
 using timestamp = std::chrono::system_clock::time_point;
 
@@ -28,16 +25,23 @@ struct Order {
 struct Fill {
     double price_;
     double volume_;
-    double total_cost_;
+    double total_cost_; // can be negative, representing a sell fill
+    double commission_;
     timestamp submittedAt;
     std::string symbol;
 };
 
+template <typename Event>
 class Broker {
     public:
-        vector<Fill> fill(const vector<Order>& orders, double open_price);
+        vector<Fill> fill(const vector<Order>& orders, const MarketContext<Event>& ctx);
     private:
+        double apply_slippage(const Order& o, double exec_price);
+    const double slippage {0.05};
+    const double commission {0.02};
 
 };
+
+#include "Broker.tpp"
 
 #endif

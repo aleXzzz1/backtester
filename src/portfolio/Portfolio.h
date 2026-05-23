@@ -10,7 +10,7 @@ using std::vector;
 using timestamp = std::chrono::system_clock::time_point;
 
 struct EquityPoint {
-    timestamp timestamp;
+    timestamp ts;
     double equity;
 };
 
@@ -35,10 +35,14 @@ class Portfolio {
         void apply(const vector<Fill>& fills, const MarketContext<Event>& context);
 
         // Closes all open positions
-        void close();
+        // void close();
 
         // Returns equity curve internal member variable
-        vector<EquityPoint> get_equitycurve();
+        vector<EquityPoint> get_equitycurve() {return equitycurve_;}
+
+        vector<Fill> get_fills() {
+            return fills_;
+        }
     private:
         double total_equity(const MarketContext<Event>& cxt);
         void update_position(const Fill& fill);
@@ -49,5 +53,7 @@ class Portfolio {
     vector<EquityPoint> equitycurve_;
     vector<Fill> fills_;
 };
+
+#include "Portfolio.tpp"
 
 #endif

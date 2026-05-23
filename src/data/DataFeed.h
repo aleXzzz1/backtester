@@ -12,11 +12,11 @@ class DataFeed {
 
     public:
     virtual ~DataFeed() = default;
-    virtual std::optional<Event> next();
+    virtual std::optional<Event> next() = 0;
+    virtual std::string get_symbol() const = 0;
 
     private:
 
 };
-
 
 #endif

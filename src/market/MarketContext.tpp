@@ -15,10 +15,10 @@ void MarketContext<Event>::update(const Event& event, const std::string symbol) 
 template <typename Event>
 const deque<Event>& MarketContext<Event>::history(const std::string& symbol) const {
     // TODO: Fix!!, it is not const since [] operator creates default key if not found
-    return history_[symbol];
+    return history_.at(symbol);
 }
 
 template <typename Event>
 Event MarketContext<Event>::get_latest(const std::string& symbol) const {
-    return = history_at(symbol).back();
+    return history_.at(symbol).back();
 }

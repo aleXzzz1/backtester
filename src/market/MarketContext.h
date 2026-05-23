@@ -17,7 +17,7 @@ class MarketContext {
 
         Event get_latest(const std::string& symbol) const;
 
-        timestamp get_time() { return currentTime_; }
+        const timestamp get_time() const { return currentTime_; }
 
     private:
 
@@ -26,5 +26,7 @@ class MarketContext {
     std::size_t maxHistorySize_ {500};
 
 };
+
+#include "MarketContext.tpp"
 
 #endif

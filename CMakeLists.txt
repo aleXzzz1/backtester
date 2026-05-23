@@ -13,14 +13,35 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(backtester src/main.cpp src/MarketEvent.cpp src/csv_parser.cpp)
-
-add_executable(tests
-    tests/test_stats.cpp
-    src/stats.cpp       # same source files, just linked into a different exe
-    src/MarketEvent.cpp
+# --- Shared sources (everything except main.cpp and tests) ---
+# Templated classes (Engine, MarketContext, Portfolio) are header-only — 
+# their definitions live in .tpp files included from their .h files.
+set(BACKTESTER_SOURCES
+    src/strategy/MAC.cpp
+    src/strategy/Indicators.cpp
+    src/analysis/Analytics.cpp
 )
 
-target_include_directories(tests PRIVATE src)
+set(BACKTESTER_INCLUDE_DIRS
+    src
+    src/data
+    src/market
+    src/portfolio
+    src/execution
+    src/strategy
+    src/analysis
+)
 
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+# --- Static library so backtester and tests share compiled code ---
+add_library(backtester_lib STATIC ${BACKTESTER_SOURCES})
+target_include_directories(backtester_lib PUBLIC ${BACKTESTER_INCLUDE_DIRS})
+
+# --- Main executable ---
+add_executable(backtester
+    src/main.cpp
+    src/data/EagerCSVFeed.cpp
+    src/strategy/MAC.cpp
+    src/strategy/Indicators.cpp
+    src/analysis/Analytics.cpp
+)
+target_link_libraries(backtester PRIVATE backtester_lib)

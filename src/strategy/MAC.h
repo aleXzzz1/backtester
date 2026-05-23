@@ -40,7 +40,7 @@ class MACrossover : public Strategy<OHLCV> {
 
         std::vector<Signal> on_event(const OHLCV& bar, const MarketContext<OHLCV>& ctx) override;
 
-        std::string name() const override;
+        std::string name() const override {return "MACrossover";}
 
     private:
     SMA fast_sma_cache_;
