@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <unordered_map>
-#include "MarketEvent.h"
+#include "Event.h"
 #include "Broker.h"
 
 using std::vector;
@@ -20,7 +20,6 @@ struct Position {
     timestamp openedAt;
 };
 
-template <typename Event>
 class Portfolio {
     public:
         Portfolio(double start_cash) : initial_cash_(start_cash)
@@ -29,10 +28,10 @@ class Portfolio {
         // Takes in a list of singals/desired orders from strategy
         // Outputs a list of actual order objects that can be considered by broker  
         // Takes into account current liquidty available as well as total equity
-        vector<Order> consider(const vector<Signal>& signals, const MarketContext<Event>& cxt);
+        OrderEvent consider(const SignalEvent& signals, const MarketContext& cxt);
 
         // Updates internal equity curve and position based on realized/filled orders
-        void apply(const vector<Fill>& fills, const MarketContext<Event>& context);
+        void apply(const FillEvent& fill, const MarketContext& context);
 
         // Closes all open positions
         // void close();
@@ -40,20 +39,19 @@ class Portfolio {
         // Returns equity curve internal member variable
         vector<EquityPoint> get_equitycurve() {return equitycurve_;}
 
-        vector<Fill> get_fills() {
+        vector<FillEvent> get_fills() {
             return fills_;
         }
     private:
-        double total_equity(const MarketContext<Event>& cxt);
-        void update_position(const Fill& fill);
-        void update_equitycurve(const MarketContext<Event>& cxt);
+        double total_equity(const MarketContext& cxt);
+        void update_position(const FillEvent& fill);
+        void update_equitycurve(const MarketContext& cxt);
     double initial_cash_;
     double current_cash_;
     std::unordered_map<std::string, Position> positions_; // Position indexed by symbol
     vector<EquityPoint> equitycurve_;
-    vector<Fill> fills_;
+    vector<FillEvent> fills_;
 };
 
-#include "Portfolio.tpp"
 
 #endif

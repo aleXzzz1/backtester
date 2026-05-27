@@ -3,6 +3,8 @@
 #include <deque>
 #include <cmath>
 
+
+
 std::optional<double> SMA::update(double price) {
 
     window_.push_back(price);
@@ -122,6 +124,7 @@ std::vector<std::optional<BollingerBand>> BollBands(const std::vector<OHLCV>& pr
 
     return bb_vec;
 }
+
 */
 
 

@@ -6,8 +6,6 @@
 #include <vector>
 #include <chrono>
 #include <ctime>
-
-#include "MarketEvent.h"
 #include "EagerCSVFeed.h"
 
 EagerCSVFeed::EagerCSVFeed(const std::string& csvPath) {
@@ -46,7 +44,7 @@ EagerCSVFeed::EagerCSVFeed(const std::string& csvPath) {
 }
 
 // Return the next marketevent in the stream of data as long as there is one
-optional<OHLCV> EagerCSVFeed::next() {
+optional<MarketEvent> EagerCSVFeed::next() {
     if (cursor_ >= events_.size()) {
         return std::nullopt;
     }
@@ -68,29 +66,27 @@ vector<string> EagerCSVFeed::splitCSVLine(const string& line) {
 }
 
 // Handle Date
-std::chrono::year_month_day EagerCSVFeed::parseDate(const string& s) {
+std::chrono::system_clock::time_point EagerCSVFeed::parseDate(const string& s) {
     std::tm tm = {};
     std::stringstream ss {s};
     ss >> std::get_time(&tm, "%Y-%m-%d");
     if (!ss) std::cout << "Date parsing failed" << std::endl;
 
-    return std::chrono::year_month_day{
-        std::chrono::year{tm.tm_year + 1900},
-        std::chrono::month{static_cast<unsigned>(tm.tm_mon + 1)},
-        std::chrono::day{static_cast<unsigned>(tm.tm_mday)}
-    };
+    std::time_t time_t_val = std::mktime(&tm);
+
+    return std::chrono::system_clock::from_time_t(time_t_val);
 }
 
-OHLCV EagerCSVFeed::parseLine(const string& line) {
+Bar EagerCSVFeed::parseLine(const string& line) {
     const vector<string> col_data = splitCSVLine(line);
-    OHLCV event;
-    event.date_ = parseDate(col_data[0]);
-    event.open_ = std::stod(col_data[5]);
-    event.high_ = std::stod(col_data[3]);
-    event.low_ = std::stod(col_data[4]);
-    event.close_ = std::stod(col_data[1]);
-    event.volume_=std::stod(col_data[6]);
-    event.symbol_ = symbol_;
+    Bar event;
+    event.ts = parseDate(col_data[0]);
+    event.open = std::stod(col_data[5]);
+    event.high = std::stod(col_data[3]);
+    event.low = std::stod(col_data[4]);
+    event.close = std::stod(col_data[1]);
+    event.volume =std::stod(col_data[6]);
+    event.symbol = symbol_;
 
     return event;
 }

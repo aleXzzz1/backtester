@@ -3,7 +3,7 @@
 #include <chrono>
 #include <iostream>
 
-PerformanceReport Analytics::compute(const vector<EquityPoint>& eqcurve, const vector<Fill>& fills) {
+PerformanceReport Analytics::compute(const vector<EquityPoint>& eqcurve, const vector<FillEvent>& fills) {
     EquityPoint init_eq = eqcurve.front();
     EquityPoint final_eq = eqcurve.back();
     auto time_diff = final_eq.ts - init_eq.ts;

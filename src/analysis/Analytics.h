@@ -39,7 +39,7 @@ class Analytics {
     public:
     static PerformanceReport compute(
         const vector<EquityPoint>& eqcurve,
-        const vector<Fill>& fills);
+        const vector<FillEvent>& fills);
 
     private:
         static double total_return(double init_eq, double final_eq);

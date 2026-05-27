@@ -3,30 +3,27 @@
 
 #include <unordered_map>
 #include <deque>
-#include "MarketEvent.h"
+#include "Event.h"
 
 using timestamp = std::chrono::system_clock::time_point;
 
-template <typename Event>
 class MarketContext {
 
     public:
-        void update(const Event& event, const std::string symbol);
+        void update(const MarketEvent& event);
 
-        const std::deque<Event>& history(const std::string& symbol) const;
+        const std::deque<MarketEvent> history(const std::string& symbol) const;
 
-        Event get_latest(const std::string& symbol) const;
+        MarketEvent get_latest(const std::string& symbol) const;
 
         const timestamp get_time() const { return currentTime_; }
 
     private:
 
-    std::unordered_map<std::string, std::deque<Event>> history_;
+    std::unordered_map<std::string, std::deque<MarketEvent>> history_;
     timestamp currentTime_ {};
     std::size_t maxHistorySize_ {500};
 
 };
-
-#include "MarketContext.tpp"
 
 #endif

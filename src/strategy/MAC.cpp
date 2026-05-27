@@ -1,14 +1,22 @@
 #include "MAC.h"
+#include "Overloaded.h"
 
 using std::vector;
 using std::optional;
 
 
-vector<Signal> MACrossover::on_event(const OHLCV& bar, const MarketContext<OHLCV>& ctx) {
-    vector<Signal> signals;
+vector<SignalEvent> MACrossover::on_event(const MarketEvent& event, const MarketContext& ctx) {
+    return std::visit(overloaded{
+        [&](const Bar& bar) { return on_bar(bar); },
+        [&](const Tick&) { return vector<SignalEvent>{}; }
+    }, event);
+}
+
+vector<SignalEvent> MACrossover::on_bar(const Bar& bar) {
+    vector<SignalEvent> signals;
     optional<double> fast, slow;
-    fast = fast_sma_cache_.update(bar.close_);
-    slow = slow_sma_cache_.update(bar.close_);
+    fast = fast_sma_cache_.update(bar.close);
+    slow = slow_sma_cache_.update(bar.close);
 
     if (fast == std::nullopt || slow == std::nullopt) return signals; // empty signal list if insufficient SMA data
 

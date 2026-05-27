@@ -4,12 +4,10 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#include "MarketEvent.h"
 #include "DataFeed.h"
 #include "EagerCSVFeed.h"
 #include "Broker.h"
 #include "MarketContext.h"
-#include "MarketEvent.h"
 #include "Portfolio.h"
 #include "MAC.h"
 #include "Engine.h"
@@ -28,7 +26,7 @@ int main(int argc, char *argv[]) {
     auto strategy = std::make_unique<MACrossover>(symbol, 20, 50);
     
 
-    Engine<OHLCV> engine{
+    Engine engine{
         std::move(feed),
         std::move(strategy), 10000.0
     };

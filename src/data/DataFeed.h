@@ -5,14 +5,13 @@
 #include <string>
 #include <vector>
 #include <optional>
-#include "MarketEvent.h"
+#include "Event.h"
 
-template <typename Event>
 class DataFeed {
 
     public:
     virtual ~DataFeed() = default;
-    virtual std::optional<Event> next() = 0;
+    virtual std::optional<MarketEvent> next() = 0;
     virtual std::string get_symbol() const = 0;
 
     private:

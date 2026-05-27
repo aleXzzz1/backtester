@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+add_compile_options(-Wall -Wextra -Wpedantic)
+
 include(FetchContent)
 FetchContent_Declare(
   Catch2
@@ -14,12 +16,16 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 
 # --- Shared sources (everything except main.cpp and tests) ---
-# Templated classes (Engine, MarketContext, Portfolio) are header-only — 
-# their definitions live in .tpp files included from their .h files.
 set(BACKTESTER_SOURCES
+    src/Engine.cpp
+    src/data/EagerCSVFeed.cpp
+    src/market/MarketContext.cpp
+    src/portfolio/Portfolio.cpp
+    src/execution/Broker.cpp
     src/strategy/MAC.cpp
     src/strategy/Indicators.cpp
     src/analysis/Analytics.cpp
+    
 )
 
 set(BACKTESTER_INCLUDE_DIRS
@@ -37,11 +43,5 @@ add_library(backtester_lib STATIC ${BACKTESTER_SOURCES})
 target_include_directories(backtester_lib PUBLIC ${BACKTESTER_INCLUDE_DIRS})
 
 # --- Main executable ---
-add_executable(backtester
-    src/main.cpp
-    src/data/EagerCSVFeed.cpp
-    src/strategy/MAC.cpp
-    src/strategy/Indicators.cpp
-    src/analysis/Analytics.cpp
-)
+add_executable(backtester src/main.cpp)
 target_link_libraries(backtester PRIVATE backtester_lib)
