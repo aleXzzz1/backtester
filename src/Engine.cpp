@@ -34,6 +34,9 @@ void Engine::handle(const MarketEvent& event) {
         }
     }
 
+    // Update portfolio equity curve on every market event
+    portfolio_.update_equitycurve(ctx_);
+
     // Feed event to strategy for signal
     auto signals = strgy_->on_event(event, ctx_);
     for (const SignalEvent& s : signals) {

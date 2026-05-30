@@ -6,7 +6,6 @@
 #include "Event.h"
 #include "Broker.h"
 
-using std::vector;
 using timestamp = std::chrono::system_clock::time_point;
 
 struct EquityPoint {
@@ -37,20 +36,19 @@ class Portfolio {
         // void close();
 
         // Returns equity curve internal member variable
-        vector<EquityPoint> get_equitycurve() {return equitycurve_;}
+        std::vector<EquityPoint> get_equitycurve() {return equitycurve_;}
 
-        vector<FillEvent> get_fills() {
-            return fills_;
-        }
+        std::vector<FillEvent> get_fills() { return fills_;}
+        void update_equitycurve(const MarketContext& cxt);
+        
     private:
         double total_equity(const MarketContext& cxt);
         void update_position(const FillEvent& fill);
-        void update_equitycurve(const MarketContext& cxt);
     double initial_cash_;
     double current_cash_;
     std::unordered_map<std::string, Position> positions_; // Position indexed by symbol
-    vector<EquityPoint> equitycurve_;
-    vector<FillEvent> fills_;
+    std::vector<EquityPoint> equitycurve_;
+    std::vector<FillEvent> fills_;
 };
 
 

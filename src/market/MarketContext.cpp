@@ -19,3 +19,7 @@ const deque<MarketEvent> MarketContext::history(const std::string& symbol) const
 MarketEvent MarketContext::get_latest(const std::string& symbol) const {
     return history_.at(symbol).back();
 }
+
+MarketEvent MarketContext::get_oldest(const std::string& symbol) const {
+    return history_.at(symbol).front();
+}

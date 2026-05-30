@@ -16,13 +16,15 @@ class MarketContext {
 
         MarketEvent get_latest(const std::string& symbol) const;
 
+        MarketEvent get_oldest(const std::string& symbol) const;
+
         const timestamp get_time() const { return currentTime_; }
 
     private:
 
     std::unordered_map<std::string, std::deque<MarketEvent>> history_;
     timestamp currentTime_ {};
-    std::size_t maxHistorySize_ {500};
+    std::size_t maxHistorySize_ {1000};
 
 };
 

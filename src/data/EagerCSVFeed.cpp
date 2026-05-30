@@ -8,6 +8,10 @@
 #include <ctime>
 #include "EagerCSVFeed.h"
 
+using std::optional;
+using std::vector;
+using std::string;
+
 EagerCSVFeed::EagerCSVFeed(const std::string& csvPath) {
     std::ifstream file(csvPath);
     if (!file) throw std::runtime_error("Could not open CSV: " + csvPath);

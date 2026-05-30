@@ -26,10 +26,7 @@ int main(int argc, char *argv[]) {
     auto strategy = std::make_unique<MACrossover>(symbol, 20, 50);
     
 
-    Engine engine{
-        std::move(feed),
-        std::move(strategy), 10000.0
-    };
+    Engine engine{std::move(feed), std::move(strategy), 10000.0};
 
     // --- Run ---
     std::cout << "Running backtest on " << symbol
@@ -39,7 +36,9 @@ int main(int argc, char *argv[]) {
 
     auto curve = engine.get_port_curve();
     auto fills = engine.get_port_fills();
-    PerformanceReport report = Analytics::compute(curve, fills);
+    const auto& context = engine.get_mkt_ctx();
+    Analytics a;
+    PerformanceReport report = a.compute(curve, fills, context, symbol);
     report.print_report();
 
     

@@ -21,12 +21,16 @@ class Engine {
 
     void run();
 
-    vector<EquityPoint> get_port_curve() {
+    std::vector<EquityPoint> get_port_curve() {
         return portfolio_.get_equitycurve();
     }
 
-    vector<FillEvent> get_port_fills() {
+    std::vector<FillEvent> get_port_fills() {
         return portfolio_.get_fills();
+    }
+
+    MarketContext get_mkt_ctx() const {
+        return ctx_;
     }
 
     private:

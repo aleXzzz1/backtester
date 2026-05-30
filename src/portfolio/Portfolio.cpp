@@ -1,5 +1,6 @@
 #include "Portfolio.h"
 #include <cmath>
+#include <iostream>
 
 #define CAP_ALLOC 0.95
 
@@ -25,7 +26,6 @@ void Portfolio::apply(const FillEvent& fill, const MarketContext& context) {
     fills_.push_back(fill);
     update_position(fill);
     current_cash_ -= fill.total_cost;
-    update_equitycurve(context);
 }
 
 void Portfolio::update_position(const FillEvent& f) {
@@ -48,12 +48,12 @@ void Portfolio::update_equitycurve(const MarketContext& cxt) {
         const auto& latest = cxt.get_latest(symbol);
         esum += mark_price(latest) * position.quantity_;
     }
-    equitycurve_.push_back(EquityPoint{.ts = cxt.get_time(), .equity = esum});
+   // std::cout << "Equity at " << cxt.get_time() << " is: $" << esum << std::endl;
+    equitycurve_.emplace_back(EquityPoint{.ts = cxt.get_time(), .equity = esum});
 }
 
 double Portfolio::total_equity(const MarketContext& cxt) {
     if (equitycurve_.empty()) return current_cash_;
-
     return equitycurve_.back().equity;
     
 }
