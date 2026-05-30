@@ -1,3 +1,9 @@
+A backtester is a piece of software used in financial/trading environments to test algorithmic trading strateiges on historical data before deploying them in real-world markets.
+
+The architecture for this backtester is modeled after a [series of articles](https://www.quantstart.com/articles/Event-Driven-Backtesting-with-Python-Part-I/) on developing an event-driven backtester in Python by [Michael Halls Moore](https://github.com/mhallsmoore) on QuantStart. 
+
+This beginner project aims to build to build an event-driven backtesting program using modern C++ features. It is also a means for me to develop my OOP and C++ skills. The broad framework of the program is visualized (with Claude's help) below:
+
 ```mermaid
 flowchart LR
     %% ===== Data sources =====
@@ -83,3 +89,34 @@ Update ctx & equity curve, run strategy"]
     classDef planned stroke-dasharray: 5 5,fill:#2a2a2a,color:#aaa
     classDef abstract font-style:italic,fill:#1f3a5f
     ```
+
+### Program Features:
+* Event-driven architecture eliminates look-ahead bias and mimics real-time market data feed
+    * Support for OHLCV Bar and Tick 
+* Moving Average Crossover template strategy
+* Analytics (Total return, CAGR, Sharpe, Max drawdown, etc)
+
+### Modern C++ Features Used:
+* std::variant (C++ 17) to represent the four distinct Event types (Market, Signal, Order, Fill)
+    * std::visit (C++17) to handle correct code executation based on actual type of Event
+    * Overloaded lambda as the argument to std::visit for appropriate function dispatch
+* std::optional (C++17) as a type-safe way to represent absent tick/bar data.
+* std::unique_ptr (C++11) to enable memory-safe runtime polymorphism on the pure virtual Strategy and DataFeed classes
+* std::chrono library (C++11) enables type-safe, convenient, and robust representation of market data timestamps.
+
+### Features currently working on:
+- Python scripting to enable user-input fetching of yfinance OHLCV data
+- Make CSV data handler more robust
+- Add support for multi-ticker strategies (pairs trading)
+	- Refactor/improve analytics to support multi-ticker evaluation
+- Add more basic template strategies
+- Add support for backtest beginning at specified date
+- Implement priority queue for multi-feed handling
+- Output equity curve to CSV for easy plotting later
+- Use constexpr more
+- Add more analytics
+	- Add unit tests for analytics
+- WebSocket/live data to support large volumes of crypto tick data
+	- Tackle concurrency
+
+
