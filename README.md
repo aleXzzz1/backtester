@@ -1,3 +1,4 @@
+```mermaid
 flowchart LR
     %% ===== Data sources =====
     subgraph DATA["Data Source"]
@@ -81,3 +82,4 @@ Update ctx & equity curve, run strategy"]
     %% ===== Styling =====
     classDef planned stroke-dasharray: 5 5,fill:#2a2a2a,color:#aaa
     classDef abstract font-style:italic,fill:#1f3a5f
+    ```
