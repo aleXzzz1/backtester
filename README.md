@@ -88,7 +88,7 @@ Update ctx & equity curve, run strategy"]
     %% ===== Styling =====
     classDef planned stroke-dasharray: 5 5,fill:#2a2a2a,color:#aaa
     classDef abstract font-style:italic,fill:#1f3a5f
-    ```
+```
 
 ### Program Features:
 * Event-driven architecture eliminates look-ahead bias and mimics real-time market data feed
