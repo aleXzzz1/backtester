@@ -4,22 +4,26 @@
 
 #define CAP_ALLOC 0.95
 
-OrderEvent Portfolio::consider(const SignalEvent& signal, const MarketContext& ctx) {
+std::optional<OrderEvent> Portfolio::consider(const SignalEvent& signal, const MarketContext& ctx) {
     // LIMITATION: Orders first in the signals vector are unintentionally assigned higher priority
     const auto& latest = ctx.get_latest(signal.symbol); // could be Market or Tick
     // if (!latest) continue;
     double price = execution_price(latest);
     double current_qty = positions_[signal.symbol].quantity_;
+    
 
     if (signal.direction == Direction::LONG) { 
         double target_qty = std::floor((total_equity(ctx) * CAP_ALLOC) / price); //Target 95% equity captital purchase
-        double cost = target_qty * price;
+        double cost = target_qty * price; 
         if (cost <= current_cash_ && target_qty > 0) {
-            return OrderEvent{.volume = target_qty, .symbol = signal.symbol};
+            //std::cout << "returning buy order\n";
+            return OrderEvent{.volume = target_qty, .symbol = signal.symbol, .ts = signal.ts};
         }
     } else if (signal.direction == Direction::FLAT && current_qty > 0.0) {
-        return OrderEvent{.volume = -1 * current_qty, .symbol = signal.symbol};
+        return OrderEvent{.volume = -1 * current_qty, .symbol = signal.symbol, .ts = signal.ts};
     }
+    return std::nullopt;
+    //std::cout << "Nothing happend";
 }
 
 void Portfolio::apply(const FillEvent& fill, const MarketContext& context) {
@@ -48,7 +52,7 @@ void Portfolio::update_equitycurve(const MarketContext& cxt) {
         const auto& latest = cxt.get_latest(symbol);
         esum += mark_price(latest) * position.quantity_;
     }
-   // std::cout << "Equity at " << cxt.get_time() << " is: $" << esum << std::endl;
+    // std::cout << "Equity at " << cxt.get_time() << " is: $" << esum << std::endl;
     equitycurve_.emplace_back(EquityPoint{.ts = cxt.get_time(), .equity = esum});
 }
 

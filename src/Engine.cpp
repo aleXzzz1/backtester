@@ -45,7 +45,9 @@ void Engine::handle(const MarketEvent& event) {
 }
 
 void Engine::handle(const SignalEvent& signal) {
-    eventQ.push(portfolio_.consider(signal, ctx_));
+    std::optional<OrderEvent> order = portfolio_.consider(signal, ctx_);
+    if (order != std::nullopt) {eventQ.push(*order);}
+
 }
 
 void Engine::handle(const OrderEvent& order) {

@@ -27,7 +27,7 @@ class Portfolio {
         // Takes in a list of singals/desired orders from strategy
         // Outputs a list of actual order objects that can be considered by broker  
         // Takes into account current liquidty available as well as total equity
-        OrderEvent consider(const SignalEvent& signals, const MarketContext& cxt);
+        std::optional<OrderEvent> consider(const SignalEvent& signals, const MarketContext& cxt);
 
         // Updates internal equity curve and position based on realized/filled orders
         void apply(const FillEvent& fill, const MarketContext& context);
@@ -40,7 +40,7 @@ class Portfolio {
 
         std::vector<FillEvent> get_fills() { return fills_;}
         void update_equitycurve(const MarketContext& cxt);
-        
+
     private:
         double total_equity(const MarketContext& cxt);
         void update_position(const FillEvent& fill);

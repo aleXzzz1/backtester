@@ -10,9 +10,7 @@ PerformanceReport Analytics::compute(const vector<EquityPoint>& eqcurve, const v
                                      const MarketContext& ctx, const std::string& symbol) {
     EquityPoint init_eq = eqcurve.front();
     EquityPoint final_eq = eqcurve.back();
-    auto time_diff = final_eq.ts - init_eq.ts;
-    auto diff_years = std::chrono::duration_cast<std::chrono::years>(time_diff);
-    daily_returns(eqcurve);
+    vector<double> returns = daily_returns(eqcurve);
     // only for one symbol atm
     double first_open = mark_price(ctx.get_oldest(symbol));
     double last_open = mark_price(ctx.get_latest(symbol));
@@ -23,7 +21,7 @@ PerformanceReport Analytics::compute(const vector<EquityPoint>& eqcurve, const v
     double cag_r = cagr(eqcurve);
     double m_drawdown = max_drawdown(eqcurve);
     int m_drawdown_days = max_drawdown_days(eqcurve);
-    double shrp = sharpe();
+    double shrp = sharpe(returns);
     
 
 
@@ -55,28 +53,37 @@ double Analytics::max_drawdown(const vector<EquityPoint>& eqcurve) {
     return max_drawdown;
 }
 
-int Analytics::max_drawdown_days(const vector<EquityPoint>& eqcurve) {
-    timestamp max_drawdown_ts; 
-    EquityPoint max_eq;
+int Analytics::max_drawdown_days(const vector<EquityPoint>& eqcurve) { 
+    if (eqcurve.empty()) return 0;
+
+    double max_drawdown_diff {0};
+    EquityPoint max_eq {eqcurve.front()};
     double max_drawdown {0};
+    bool underwater {false};
+
     for (const EquityPoint& e : eqcurve) {
-        if (e.equity > max_eq.equity) {
-            max_eq = e;
-            max_drawdown_ts = e.ts;
-        } else {
-            double drawdown = (e.equity - max_eq.equity) / max_eq.equity;
-            if (drawdown < max_drawdown) {
-                max_drawdown = drawdown;
-                max_drawdown_ts = e.ts;
+        if (e.equity >= max_eq.equity) {
+            if (underwater) {
+                double diff = std::chrono::duration_cast<std::chrono::hours>(e.ts - max_eq.ts).count();
+                max_drawdown_diff = (diff > max_drawdown_diff) ? diff : max_drawdown_diff;
+                max_eq = e;
+                underwater = false;
             }
+        } else {
+            underwater = true;
         }
     }
-    auto diff = std::chrono::duration_cast<std::chrono::hours>(max_drawdown_ts - max_eq.ts);
-    return (diff.count() / 24);
+    // Compute diff for final equity point
+
+    if (underwater) {
+        double diff = std::chrono::duration_cast<std::chrono::hours>(eqcurve.back().ts - max_eq.ts).count();
+        max_drawdown_diff = (diff > max_drawdown_diff) ? diff : max_drawdown_diff;
+    }
+    return (max_drawdown_diff / 24);
 }
 
 
-double Analytics::sharpe() {
+double Analytics::sharpe(const vector<double>& returns) {
     if (returns.size() < 2) return 0.0;
     double dr_sum = std::accumulate(returns.begin(), returns.end(), 0.0); 
     double dr_mean = dr_sum / returns.size();
@@ -109,10 +116,12 @@ double Analytics::cagr(double init_eq, double final_eq, std::chrono::year years)
 }
 */
 
-void Analytics::daily_returns(const vector<EquityPoint>& eqcurve) {
+vector<double> Analytics::daily_returns(const vector<EquityPoint>& eqcurve) {
+    std:;vector<double> returns;
     for (int i = 1; i < eqcurve.size(); i++) {
         returns.push_back((eqcurve[i].equity / eqcurve[i - 1].equity) - 1.0);
     }
+    return returns;
     // for (double r : returns) { std::cout << r << std::endl; }
 }
 

@@ -2,7 +2,7 @@ A backtester is a piece of software used in financial/trading environments to te
 
 The architecture for this backtester is modeled after a [series of articles](https://www.quantstart.com/articles/Event-Driven-Backtesting-with-Python-Part-I/) on developing an event-driven backtester in Python by [Michael Halls Moore](https://github.com/mhallsmoore) on QuantStart. 
 
-This beginner project aims to build to build an event-driven backtesting program using modern C++ features. It is also a means for me to develop my OOP and C++ skills. The broad framework of the program is visualized (with Claude's help) below:
+This beginner project aims to build an event-driven backtesting program using modern C++ features. It is also a means for me to develop my OOP and C++ skills. The broad framework of the program is visualized (with Claude's help) below:
 
 ```mermaid
 flowchart LR
@@ -90,11 +90,36 @@ Update ctx & equity curve, run strategy"]
     classDef abstract font-style:italic,fill:#1f3a5f
     ```
 
+### Running the Backtester
+
+Currently, the engine reads historical OHLCV data from CSV files. A helper script,
+`scripts/fetch_data.py`, downloads this data from Yahoo Finance via the
+[`yfinance`](https://github.com/ranaroussi/yfinance) library in the exact
+format the CSV feed expects.
+
+**Requirements:** Python 3 and `yfinance`:
+
+```bash
+pip install yfinance
+```
+
+**Usage:** run the script and follow the prompts:
+
+```bash
+python scripts/fetch_data.py
+```
+
+Then, compile and execute the program with 
+```bash 
+cmake --build build && .build/backtester data/<STOCK>.csv
+```
+from the root directory.
+
 ### Program Features:
 * Event-driven architecture eliminates look-ahead bias and mimics real-time market data feed
     * Support for OHLCV Bar and Tick 
 * Moving Average Crossover template strategy
-* Analytics (Total return, CAGR, Sharpe, Max drawdown, etc)
+* Analytics (Total return, CAGR, Sharpe, Max drawdown, drawdown duration, etc)
 
 ### Modern C++ Features Used:
 * std::variant (C++ 17) to represent the four distinct Event types (Market, Signal, Order, Fill)
@@ -105,7 +130,7 @@ Update ctx & equity curve, run strategy"]
 * std::chrono library (C++11) enables type-safe, convenient, and robust representation of market data timestamps.
 
 ### Features currently working on:
-- Python scripting to enable user-input fetching of yfinance OHLCV data
+- Python scripting to enable user-input fetching of yfinance OHLCV data [x]
 - Make CSV data handler more robust
 - Add support for multi-ticker strategies (pairs trading)
 	- Refactor/improve analytics to support multi-ticker evaluation

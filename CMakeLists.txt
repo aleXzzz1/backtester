@@ -45,3 +45,8 @@ target_include_directories(backtester_lib PUBLIC ${BACKTESTER_INCLUDE_DIRS})
 # --- Main executable ---
 add_executable(backtester src/main.cpp)
 target_link_libraries(backtester PRIVATE backtester_lib)
+
+# --- Test executable ---
+add_executable(test_analytics tests/test_analytics.cpp)
+target_link_libraries(test_analytics PRIVATE backtester_lib Catch2::Catch2WithMain)
+target_include_directories(test_analytics PRIVATE src src/analysis)

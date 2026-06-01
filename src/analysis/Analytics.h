@@ -39,23 +39,21 @@ struct PerformanceReport {
 
 class Analytics {
     public:
-    PerformanceReport compute(
+    static PerformanceReport compute(
         const std::vector<EquityPoint>& eqcurve,
         const std::vector<FillEvent>& fills,
         const MarketContext& ctx,
         const std::string& symbol);
-
-    private:
-        double total_return(double init_eq, double final_eq);
-        double cagr(const std::vector<EquityPoint>& eqcurve);
-        double total_comission();
-        double total_slippage();
-        double benchmark_return(double first_open, double last_open);
-        double max_drawdown(const std::vector<EquityPoint>& eqcurve);
-        int max_drawdown_days(const std::vector<EquityPoint>& eqcurve);
-        double sharpe();
-        void daily_returns(const std::vector<EquityPoint>& eqcurve);
-        double cagr(double init_eq, double final_eq, std::chrono::year years);
-        std::vector<double> returns;
+        
+        static double total_return(double init_eq, double final_eq);
+        static double cagr(const std::vector<EquityPoint>& eqcurve);
+        static double total_comission();
+        static double total_slippage();
+        static double benchmark_return(double first_open, double last_open);
+        static double max_drawdown(const std::vector<EquityPoint>& eqcurve);
+        static int max_drawdown_days(const std::vector<EquityPoint>& eqcurve);
+        static double sharpe(const std::vector<double>& returns);
+        static std::vector<double> daily_returns(const std::vector<EquityPoint>& eqcurve);
+        static double cagr(double init_eq, double final_eq, std::chrono::year years);
 };
 #endif

@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
     auto feed = std::make_unique<EagerCSVFeed>(argv[1]);
     std::string symbol = feed->get_symbol();
 
+    
     auto strategy = std::make_unique<MACrossover>(symbol, 20, 50);
     
 
