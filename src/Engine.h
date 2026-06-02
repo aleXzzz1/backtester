@@ -7,15 +7,16 @@
 #include "MAC.h"
 #include "Portfolio.h"
 #include "Event.h"
+
 #include <queue>
 
 class Engine {
     public:
     Engine(std::unique_ptr<DataFeed> feed,
            std::unique_ptr<Strategy> strategy,
-            double start_cash)
+            PortfolioParam pp)
         : feed_(std::move(feed)), strgy_(std::move(strategy)),
-        portfolio_(start_cash) {
+        portfolio_(pp.starting_cash, pp.capital_alloc) {
             
         }
 

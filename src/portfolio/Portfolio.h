@@ -8,6 +8,11 @@
 
 using timestamp = std::chrono::system_clock::time_point;
 
+struct PortfolioParam {
+    double starting_cash;
+    double capital_alloc;
+};
+
 struct EquityPoint {
     timestamp ts;
     double equity;
@@ -21,8 +26,8 @@ struct Position {
 
 class Portfolio {
     public:
-        Portfolio(double start_cash) : initial_cash_(start_cash)
-        , current_cash_(start_cash) {}
+        Portfolio(double start_cash, double cap_allocation) : initial_cash_(start_cash), 
+        current_cash_(start_cash), cap_alloc(cap_allocation) {}
 
         // Takes in a list of singals/desired orders from strategy
         // Outputs a list of actual order objects that can be considered by broker  
@@ -46,6 +51,7 @@ class Portfolio {
         void update_position(const FillEvent& fill);
     double initial_cash_;
     double current_cash_;
+    double cap_alloc;
     std::unordered_map<std::string, Position> positions_; // Position indexed by symbol
     std::vector<EquityPoint> equitycurve_;
     std::vector<FillEvent> fills_;

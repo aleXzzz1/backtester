@@ -2,8 +2,6 @@
 #include <cmath>
 #include <iostream>
 
-#define CAP_ALLOC 0.95
-
 std::optional<OrderEvent> Portfolio::consider(const SignalEvent& signal, const MarketContext& ctx) {
     // LIMITATION: Orders first in the signals vector are unintentionally assigned higher priority
     const auto& latest = ctx.get_latest(signal.symbol); // could be Market or Tick
@@ -13,7 +11,7 @@ std::optional<OrderEvent> Portfolio::consider(const SignalEvent& signal, const M
     
 
     if (signal.direction == Direction::LONG) { 
-        double target_qty = std::floor((total_equity(ctx) * CAP_ALLOC) / price); //Target 95% equity captital purchase
+        double target_qty = std::floor((total_equity(ctx) * cap_alloc) / price); //Target 95% equity captital purchase
         double cost = target_qty * price; 
         if (cost <= current_cash_ && target_qty > 0) {
             //std::cout << "returning buy order\n";

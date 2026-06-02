@@ -111,7 +111,7 @@ python scripts/fetch_data.py
 
 Then, compile and execute the program with 
 ```bash 
-cmake --build build && .build/backtester data/<STOCK>.csv
+cmake --build build && .build/backtester
 ```
 from the root directory.
 
@@ -119,6 +119,7 @@ from the root directory.
 * Event-driven architecture eliminates look-ahead bias and mimics real-time market data feed
     * Support for OHLCV Bar and Tick 
 * Moving Average Crossover template strategy
+* Simple Console UI enables user-input parameters for template strategies (currently only SMA)
 * Analytics (Total return, CAGR, Sharpe, Max drawdown, drawdown duration, etc)
 
 ### Modern C++ Features Used:
@@ -131,6 +132,7 @@ from the root directory.
 
 ### Features currently working on:
 - Python scripting to enable user-input fetching of yfinance OHLCV data [x]
+- Implement simple Console UI to make the backtester more user-friendly [x]
 - Make CSV data handler more robust
 - Add support for multi-ticker strategies (pairs trading)
 	- Refactor/improve analytics to support multi-ticker evaluation

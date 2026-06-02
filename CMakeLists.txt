@@ -18,6 +18,7 @@ FetchContent_MakeAvailable(Catch2)
 # --- Shared sources (everything except main.cpp and tests) ---
 set(BACKTESTER_SOURCES
     src/Engine.cpp
+    src/ConsoleUI.cpp
     src/data/EagerCSVFeed.cpp
     src/market/MarketContext.cpp
     src/portfolio/Portfolio.cpp

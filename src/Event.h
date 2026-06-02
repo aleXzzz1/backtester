@@ -24,8 +24,8 @@ inline double mark_price(const Tick& t)      { return t.price; }  // value posit
 inline auto   event_time(const Tick& t)      { return t.ts; }
 inline std::string event_symbol(const Tick& t) { return t.symbol; }
 
-inline double execution_price(const Bar& bar) { return bar.open; }   // bar fills happen at next open
-inline double mark_price(const Bar& bar)      { return bar.close; }  // value positions at close
+inline double execution_price(const Bar& bar) { return bar.close; }   // bar fills happen at next open
+inline double mark_price(const Bar& bar)      { return bar.open; }  // value positions at close
 inline auto   event_time(const Bar& bar)      { return bar.ts; }
 inline std::string event_symbol(const Bar& bar)  { return bar.symbol; }
 

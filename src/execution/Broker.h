@@ -14,7 +14,7 @@ class Broker {
     private:
         double apply_slippage(const OrderEvent& o, double exec_price);
     const double slippage {0.05};
-    const double commission {0.02};
+    const double commission {0.002};
 
 };
 

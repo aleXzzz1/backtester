@@ -24,7 +24,7 @@ class MarketContext {
 
     std::unordered_map<std::string, std::deque<MarketEvent>> history_;
     timestamp currentTime_ {};
-    std::size_t maxHistorySize_ {1000};
+    std::size_t maxHistorySize_ {2000};
 
 };
 

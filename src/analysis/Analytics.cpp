@@ -8,30 +8,38 @@ using std::vector;
 
 PerformanceReport Analytics::compute(const vector<EquityPoint>& eqcurve, const vector<FillEvent>& fills,
                                      const MarketContext& ctx, const std::string& symbol) {
-    EquityPoint init_eq = eqcurve.front();
-    EquityPoint final_eq = eqcurve.back();
     vector<double> returns = daily_returns(eqcurve);
     // only for one symbol atm
     double first_open = mark_price(ctx.get_oldest(symbol));
     double last_open = mark_price(ctx.get_latest(symbol));
 
-
-    double tr = total_return(init_eq.equity, final_eq.equity);
+    double start_e = eqcurve.front().equity;
+    double final_e = eqcurve.back().equity;
+    double tr = total_return(eqcurve);
     double benchmark = benchmark_return(first_open, last_open);
     double cag_r = cagr(eqcurve);
     double m_drawdown = max_drawdown(eqcurve);
     int m_drawdown_days = max_drawdown_days(eqcurve);
     double shrp = sharpe(returns);
-    
+    double t_commission = total_commission(fills);
+    int number_trades = fills.size();
 
 
     // double cagr = cagr(init_eq.equity, final_eq.equity, diff_years);
-    return {.total_return = tr, .cagr = cag_r, .benchmark_return = benchmark, 
+    return {.total_return = tr,
+            .cagr = cag_r,
+            .benchmark_return = benchmark, 
+            .starting_equity = start_e,
+            .final_equity = final_e,
             .max_drawdown = m_drawdown,
-            .sharpe = shrp, .max_drawdown_duration_days = m_drawdown_days};
+            .sharpe = shrp, .max_drawdown_duration_days = m_drawdown_days,
+            .total_commission = t_commission,
+            .num_trades = number_trades};
     }
 
-double Analytics::total_return(double init_eq, double final_eq) {
+double Analytics::total_return(const vector<EquityPoint>& eqcurve) {
+    double init_eq = eqcurve.front().equity;
+    double final_eq = eqcurve.back().equity;
     return (final_eq / init_eq) - 1; // gives in decimal (eg. 0.25 = 25%)
 }
 
@@ -73,8 +81,8 @@ int Analytics::max_drawdown_days(const vector<EquityPoint>& eqcurve) {
             underwater = true;
         }
     }
+    
     // Compute diff for final equity point
-
     if (underwater) {
         double diff = std::chrono::duration_cast<std::chrono::hours>(eqcurve.back().ts - max_eq.ts).count();
         max_drawdown_diff = (diff > max_drawdown_diff) ? diff : max_drawdown_diff;
@@ -108,31 +116,36 @@ double Analytics::cagr(const vector<EquityPoint>& eqcurve) {
     return std::pow((final.equity / starting.equity), exp) - 1;
 }
 
-/*
-double Analytics::cagr(double init_eq, double final_eq, std::chrono::year years) {
-    double base = (final_eq / init_eq);
-    double exponent = (1 / years);
-    return std::pow(base, exponent) - 1; // gives in decimal
-}
-*/
-
 vector<double> Analytics::daily_returns(const vector<EquityPoint>& eqcurve) {
-    std:;vector<double> returns;
+    vector<double> returns;
     for (int i = 1; i < eqcurve.size(); i++) {
         returns.push_back((eqcurve[i].equity / eqcurve[i - 1].equity) - 1.0);
     }
     return returns;
-    // for (double r : returns) { std::cout << r << std::endl; }
+}
+
+double Analytics::total_commission(const std::vector<FillEvent>& fills) {
+    double sum {0.0};
+    for (const auto& f : fills) {
+        sum += f.commission;
+    }
+    return sum;
 }
 
 void PerformanceReport::print_report() {
     std::cout << "Backtest run complete! Printing analytics...\n";
     std::cout << "============================================\n";
 
+
+    std::cout << "Beginning Equity:       " << "$" << starting_equity << std::endl;
+    std::cout << "Final Equity:           " << "$" << final_equity << std::endl;
     std::cout << "Total Return:           " << total_return * 100 << "%" << std::endl; 
     std::cout << "CAGR:                   " << cagr * 100 << "%" << std::endl;
     std::cout << "Benchmark [Buy & Hold]: " << benchmark_return * 100 << "%" << std::endl;
     std::cout << "Max Drawdown:           " << max_drawdown * 100 << "%" << std::endl;
     std::cout << "Max Drawdown Days:      " << max_drawdown_duration_days << std::endl;
-    std::cout << "Sharpe Ratio:           " << sharpe << "\n\n\n";
+    std::cout << "Sharpe Ratio:           " << sharpe << std::endl;
+    std::cout << "Total Commission Cost:  " << "$" << total_commission  << std::endl;
+    std::cout << "Number of Trades:       " << num_trades << std::endl;
+    std::cout << "\n";
 }

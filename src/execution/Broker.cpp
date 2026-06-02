@@ -5,13 +5,13 @@ FillEvent Broker::fill(const OrderEvent& order, const MarketContext& ctx) {
     const auto& latest = ctx.get_latest(order.symbol);
     double price = apply_slippage(order, execution_price(latest));
     double order_cost = (price * order.volume);
-    double total_cost = ((order_cost) * commission) + order_cost;
-    std::cout << "Executed trade for \"" << order.symbol << "\" at price/volume of " <<
-         price << "/" << order.volume << std::endl;
+    double fee = std::abs(order_cost) * commission;
+    double total_cost = order_cost + (order.volume > 0 ? fee : -fee);
+    // std::cout << "Executed trade for \"" << order.symbol << "\" at price/volume of " << price << "/" << order.volume << std::endl;
     return FillEvent{.price = price, 
                      .volume = order.volume,
                      .total_cost = total_cost,
-                     .commission = ((order_cost) * commission),
+                     .commission = fee,
                      .ts = ctx.get_time(),
                      .symbol = order.symbol};
 }

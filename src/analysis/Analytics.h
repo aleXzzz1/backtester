@@ -7,7 +7,10 @@
 struct PerformanceReport {
     // print perf report to console after backtest over
     void print_report();
+
     // returns
+    double starting_equity;
+    double final_equity;
     double total_return;
     double cagr;
 
@@ -22,18 +25,17 @@ struct PerformanceReport {
     // double sortino;
     // double calmar;
 
-    /* trades
+    // trades
     int num_trades;
-    double win_rate;
-    double avg_win;
-    double avg_loss;
-    double profit_factor;
-    double avg_trade_duration_days;
-    */
+    // double win_rate;
+    // double avg_win;
+    // double avg_loss;
+    // double profit_factor;
+    // double avg_trade_duration_days;
+    
 
     // costs
-    //double total_commission;
-    //double total_slippage;
+    double total_commission;
     // double cost_as_pct_of_gross_pnl;
 };
 
@@ -44,11 +46,10 @@ class Analytics {
         const std::vector<FillEvent>& fills,
         const MarketContext& ctx,
         const std::string& symbol);
-        
-        static double total_return(double init_eq, double final_eq);
+
+        static double total_return(const std::vector<EquityPoint>& eqcurve);
         static double cagr(const std::vector<EquityPoint>& eqcurve);
-        static double total_comission();
-        static double total_slippage();
+        static double total_commission(const std::vector<FillEvent>& fills);
         static double benchmark_return(double first_open, double last_open);
         static double max_drawdown(const std::vector<EquityPoint>& eqcurve);
         static int max_drawdown_days(const std::vector<EquityPoint>& eqcurve);
