@@ -10,7 +10,9 @@ using timestamp = std::chrono::system_clock::time_point;
 
 struct PortfolioParam {
     double starting_cash;
-    double capital_alloc;
+    double max_long_exposure; // for longs
+    double max_short_exposure; // for shorts
+    double risk_per_trade;
 };
 
 struct EquityPoint {
@@ -26,8 +28,12 @@ struct Position {
 
 class Portfolio {
     public:
-        Portfolio(double start_cash, double cap_allocation) : initial_cash_(start_cash), 
-        current_cash_(start_cash), cap_alloc(cap_allocation) {}
+        Portfolio(double start_cash, double cap_allocation, double mse, double rpt) 
+        : initial_cash_(start_cash), 
+        current_cash_(start_cash),
+        cap_alloc(cap_allocation),
+        risk_per_trade(rpt),
+        max_short_exposure(mse) {}
 
         // Takes in a list of singals/desired orders from strategy
         // Outputs a list of actual order objects that can be considered by broker  
@@ -49,12 +55,14 @@ class Portfolio {
     private:
         double total_equity(const MarketContext& cxt);
         void update_position(const FillEvent& fill);
-    double initial_cash_;
-    double current_cash_;
-    double cap_alloc;
-    std::unordered_map<std::string, Position> positions_; // Position indexed by symbol
-    std::vector<EquityPoint> equitycurve_;
-    std::vector<FillEvent> fills_;
+        double initial_cash_;
+        double current_cash_;
+        double cap_alloc;
+        double risk_per_trade;
+        double max_short_exposure;
+        std::unordered_map<std::string, Position> positions_; // Position indexed by symbol
+        std::vector<EquityPoint> equitycurve_;
+        std::vector<FillEvent> fills_;
 };
 
 

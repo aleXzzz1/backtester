@@ -23,6 +23,7 @@ PerformanceReport Analytics::compute(const vector<EquityPoint>& eqcurve, const v
     double shrp = sharpe(returns);
     double t_commission = total_commission(fills);
     int number_trades = fills.size();
+    int eqp = eqcurve.size();
 
 
     // double cagr = cagr(init_eq.equity, final_eq.equity, diff_years);
@@ -34,7 +35,8 @@ PerformanceReport Analytics::compute(const vector<EquityPoint>& eqcurve, const v
             .max_drawdown = m_drawdown,
             .sharpe = shrp, .max_drawdown_duration_days = m_drawdown_days,
             .total_commission = t_commission,
-            .num_trades = number_trades};
+            .num_trades = number_trades,
+            .num_equity_points = eqp};
     }
 
 double Analytics::total_return(const vector<EquityPoint>& eqcurve) {
@@ -66,7 +68,6 @@ int Analytics::max_drawdown_days(const vector<EquityPoint>& eqcurve) {
 
     double max_drawdown_diff {0};
     EquityPoint max_eq {eqcurve.front()};
-    double max_drawdown {0};
     bool underwater {false};
 
     for (const EquityPoint& e : eqcurve) {
@@ -147,5 +148,6 @@ void PerformanceReport::print_report() {
     std::cout << "Sharpe Ratio:           " << sharpe << std::endl;
     std::cout << "Total Commission Cost:  " << "$" << total_commission  << std::endl;
     std::cout << "Number of Trades:       " << num_trades << std::endl;
+    std::cout << "Number of Equity Points:" << num_equity_points << std::endl;
     std::cout << "\n";
 }

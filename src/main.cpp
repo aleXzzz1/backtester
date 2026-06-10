@@ -9,7 +9,7 @@
 #include "ConsoleUI.h"
 
 
-int main(int argc, char *argv[]) {
+int main() {
     std::cout << "\033[2J\033[1;1H";
     std::cout << "Welcome to my C++ Backtester! Select an option to get started: \n\n";
 

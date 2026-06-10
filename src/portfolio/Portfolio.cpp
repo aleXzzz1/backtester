@@ -8,17 +8,34 @@ std::optional<OrderEvent> Portfolio::consider(const SignalEvent& signal, const M
     // if (!latest) continue;
     double price = execution_price(latest);
     double current_qty = positions_[signal.symbol].quantity_;
-    
+
+    if (signal.direction == Direction::FLAT) {
+        if (current_qty != 0.0) return OrderEvent{.volume = -current_qty, .symbol = signal.symbol, .ts = signal.ts};
+        return std::nullopt;
+    }
+
+    double stop_dist = std::abs(price - signal.stop);
+    if (stop_dist == 0.0) {
+        std::cout << "stop dist was equal to price!\n";
+        return std::nullopt;
+    }
+    double risk_qty = std::floor((total_equity(ctx) * risk_per_trade) / price);
+    double cap_qty  = std::floor((total_equity(ctx) * cap_alloc) / price);
+    double target_qty = std::min(risk_qty, cap_qty);
+    if (target_qty <= 0.0) return std::nullopt;
 
     if (signal.direction == Direction::LONG) { 
-        double target_qty = std::floor((total_equity(ctx) * cap_alloc) / price); //Target 95% equity captital purchase
+        //Target 95% equity captital purchase
         double cost = target_qty * price; 
-        if (cost <= current_cash_ && target_qty > 0) {
+        if (cost <= current_cash_) {
             //std::cout << "returning buy order\n";
             return OrderEvent{.volume = target_qty, .symbol = signal.symbol, .ts = signal.ts};
         }
-    } else if (signal.direction == Direction::FLAT && current_qty > 0.0) {
-        return OrderEvent{.volume = -1 * current_qty, .symbol = signal.symbol, .ts = signal.ts};
+    } else if (signal.direction == Direction::SHORT) {
+        // SIMPLIFYING ASSUMPTION: Shorting has no margin constrain
+        if (target_qty > 0.0) {
+            return OrderEvent{.volume = -target_qty - current_qty, .symbol = signal.symbol, .ts = signal.ts};
+        }
     }
     return std::nullopt;
     //std::cout << "Nothing happend";
@@ -31,16 +48,27 @@ void Portfolio::apply(const FillEvent& fill, const MarketContext& context) {
 }
 
 void Portfolio::update_position(const FillEvent& f) {
-    double prev_avg_cost = positions_[f.symbol].avgcost_;
-    double prev_qty = positions_[f.symbol].quantity_;
-
-    // Average cost of position for symbol over time
+    Position& pos = positions_.at(f.symbol);
+    double prev_avg_cost = pos.avgcost_;
+    double prev_qty = pos.quantity_;
     double new_qty = prev_qty + f.volume;
-    double new_avg_cost = (new_qty == 0.0) ? 0.0 :
-    (prev_avg_cost * prev_qty + f.price * f.volume) / new_qty;
 
-    positions_[f.symbol].avgcost_ = new_avg_cost;
-    positions_[f.symbol].quantity_= new_qty;
+    if (prev_qty == 0.0) {
+        // Average cost is just fill price if no previous qty
+        pos.avgcost_ = f.price;
+    } else if ((prev_qty > 0.0) == (f.volume > 0)) {
+        // If prev and cur qty are same sign, take weighted average
+        pos.avgcost_ = (prev_avg_cost * prev_qty + f.price * f.volume) / new_qty;
+    } else {
+        // If prev and cur qty are diff sign
+        if (new_qty == 0.0) {
+            // Average cost is just fill price 
+            pos.avgcost_ = 0.0;
+        } else if ((prev_qty > 0.0) != (new_qty > 0.0)) {
+            pos.avgcost_ = f.price;
+        }
+    }
+    pos.quantity_ = new_qty;
 }
 
 void Portfolio::update_equitycurve(const MarketContext& cxt) {
@@ -57,5 +85,4 @@ void Portfolio::update_equitycurve(const MarketContext& cxt) {
 double Portfolio::total_equity(const MarketContext& cxt) {
     if (equitycurve_.empty()) return current_cash_;
     return equitycurve_.back().equity;
-    
 }

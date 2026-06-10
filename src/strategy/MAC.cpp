@@ -28,8 +28,8 @@ vector<SignalEvent> MACrossover::on_bar(const Bar& bar) {
         return signals;
     }
 
-    if (above && !was_above_) signals.push_back({.symbol = this->symbol_, .direction = Direction::LONG});
-    if (!above && was_above_) signals.push_back({.symbol = this->symbol_, .direction = Direction::FLAT});
+    if (above && !was_above_) signals.push_back({.symbol = this->symbol_, .ts = bar.ts, .direction = Direction::LONG});
+    if (!above && was_above_) signals.push_back({.symbol = this->symbol_, .ts = bar.ts, .direction = Direction::FLAT});
 
     was_above_ = above;
 

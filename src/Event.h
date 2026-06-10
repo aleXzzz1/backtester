@@ -11,7 +11,7 @@ using timestamp = std::chrono::system_clock::time_point;
 struct Bar {std::string symbol; timestamp ts; 
             double open, high, low, close, volume;};
 struct Tick {std::string symbol; timestamp ts; double price;};
-struct SignalEvent {std::string symbol; timestamp ts; Direction direction;};
+struct SignalEvent {std::string symbol; timestamp ts; Direction direction; double stop {0};};
 struct OrderEvent {std::string symbol; timestamp ts; double volume;};
 struct FillEvent {std::string symbol; timestamp ts; double price, volume, total_cost, commission;};
 

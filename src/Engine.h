@@ -12,13 +12,10 @@
 
 class Engine {
     public:
-    Engine(std::unique_ptr<DataFeed> feed,
-           std::unique_ptr<Strategy> strategy,
-            PortfolioParam pp)
-        : feed_(std::move(feed)), strgy_(std::move(strategy)),
-        portfolio_(pp.starting_cash, pp.capital_alloc) {
-            
-        }
+    Engine(std::unique_ptr<DataFeed> feed, std::unique_ptr<Strategy> strategy, PortfolioParam pp):
+        feed_(std::move(feed)),
+        strgy_(std::move(strategy)),
+        portfolio_(pp.starting_cash, pp.max_long_exposure, pp.max_short_exposure, pp.max_long_exposure) {}
 
     void run();
 
@@ -40,13 +37,14 @@ class Engine {
     void handle(const OrderEvent& order);
     void handle(const FillEvent& fill);
 
+    std::unique_ptr<DataFeed> feed_;
+    std::unique_ptr<Strategy> strgy_;
     std::queue<Event> eventQ;
     MarketContext ctx_;
     Portfolio portfolio_; // has no default constructor. must initialize in engine ctor
     Broker broker_;
     std::unordered_map<std::string, std::vector<OrderEvent>> pending_orders;
-    std::unique_ptr<DataFeed> feed_;
-    std::unique_ptr<Strategy> strgy_;
+
 
 
 

@@ -27,6 +27,7 @@ struct PerformanceReport {
 
     // trades
     int num_trades;
+    int num_equity_points;
     // double win_rate;
     // double avg_win;
     // double avg_loss;

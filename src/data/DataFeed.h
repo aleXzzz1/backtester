@@ -14,8 +14,6 @@ class DataFeed {
     virtual std::optional<MarketEvent> next() = 0;
     virtual std::string get_symbol() const = 0;
 
-    private:
-
 };
 
 #endif
